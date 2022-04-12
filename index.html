@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      * {
+        margin: 0;
+      }
+
+      canvas {
+        background-color: #eee;
+      }
+    </style>
+    <title>Collision Detection</title>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+
+    <script>
+      // canvas variables
+      const canvas = document.querySelector("#canvas");
+      const ctx = canvas.getContext("2d");
+      let circle1;
+      let circle2;
+
+      // canvas width
+      canvas.width = innerWidth;
+      canvas.height = innerHeight;
+
+      // coords
+      let coords = {
+        x: 10,
+        y: 10,
+      };
+
+      // mousemove event
+      document.addEventListener("mousemove", (e) => {
+        coords.x = e.clientX;
+        coords.y = e.clientY;
+      });
+
+      //pythogaren theorem
+      function getDistance(x1, y1, x2, y2) {
+        let xDistance = x2 - x1;
+        let yDistance = y2 - y1;
+
+        return Math.sqrt(Math.pow(xDistance, 2) + Math.pow(yDistance, 2));
+      }
+
+      // circle object
+      class Circle {
+        constructor(x, y, radius, color) {
+          this.x = x;
+          this.y = y;
+          this.radius = radius;
+          this.PI = Math.PI * 2;
+          this.color = color;
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, this.PI);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+          ctx.closePath();
+        }
+
+        update() {
+          this.draw();
+        }
+      }
+
+      // init function
+      function init() {
+        //create circle 1
+        circle1 = new Circle(canvas.width / 2, canvas.height / 2, 100, "black");
+        circle1.draw();
+
+        // creact circle 2
+        circle2 = new Circle(10, 10, 40, "red");
+      }
+
+      //animate function
+      function animate() {
+        requestAnimationFrame(animate);
+
+        //clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        //rerender circle
+        circle1.update();
+
+        //rerender small circle when mouse is move
+        circle2.x = coords.x;
+        circle2.y = coords.y;
+        circle2.update();
+
+        const distance = getDistance(
+          circle1.x,
+          circle1.y,
+          circle2.x,
+          circle2.y
+        );
+
+        //check distance from two circle object
+        if (distance < circle1.radius + circle2.radius) {
+          circle1.color = "green";
+        } else {
+          circle1.color = "black";
+        }
+      }
+
+      //run
+      init();
+      animate();
+    </script>
+  </body>
+</html>
